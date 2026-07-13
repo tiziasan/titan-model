@@ -86,9 +86,6 @@
   .msg.assistant .av{width:28px;height:28px;border-radius:8px;flex:none;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px}
 
   .chat-input{border-top:1px solid var(--line-soft);padding:13px 16px;display:flex;flex-direction:column;gap:10px}
-  .prefills{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 13px;font-size:13px;color:var(--ink-soft);cursor:pointer;transition:all .12s}
-  .chip:hover{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-soft)}
   .composer{display:flex;gap:10px;align-items:flex-end}
   .composer textarea{min-height:46px;max-height:120px}
   .send{flex:none;width:46px;height:46px;border-radius:12px;border:none;background:var(--accent);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
@@ -414,9 +411,8 @@ function screenChat(){
         <div class="msg assistant"><div class="av">${esc(avatarTxt)}</div><div class="bubble">Hi! Send me your message and I'll respond.</div></div>
       </div>
       <div class="chat-input">
-        <div class="prefills" id="chips"><button class="chip" id="usePrompt">${esc(promptText)}</button></div>
         <div class="composer">
-          <textarea id="composer" placeholder="Type a message…" rows="1">${esc(promptText)}</textarea>
+          <textarea id="composer" rows="1" readonly aria-readonly="true" title="This message is fixed for the study and can't be edited">${esc(promptText)}</textarea>
           <button class="send" id="send" title="Send" aria-label="Send"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 8 6 8-16-8z" fill="currentColor"/></svg></button>
         </div>
       </div>
@@ -428,17 +424,15 @@ function screenChat(){
   const sendBtn = document.getElementById('send');
   let sent = false;
 
-  document.getElementById('usePrompt').onclick = ()=>{ composer.value = promptText; composer.focus(); };
-  composer.addEventListener('input', ()=>{ composer.style.height='auto'; composer.style.height=Math.min(120,composer.scrollHeight)+'px'; });
+  composer.style.height='auto'; composer.style.height=Math.min(120,composer.scrollHeight)+'px';
   composer.addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); doSend(); } });
   sendBtn.onclick = doSend;
 
   function doSend(){
     if(sent) return;
-    const text = composer.value.trim() || promptText;
+    const text = promptText;
     sent = true;
     composer.disabled = true; sendBtn.disabled = true;
-    document.getElementById('chips').style.display = 'none';
 
     const u = document.createElement('div'); u.className='msg user';
     u.innerHTML = `<div class="bubble">${esc(text)}</div>`;

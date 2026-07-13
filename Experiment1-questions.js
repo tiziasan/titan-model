@@ -107,8 +107,8 @@ window.EXPERIMENT_CONFIG = {
   // Keep it plausible for BOTH a small and a large model, since the same
   // text appears under both labels.
   prompt: {
-    text: "I have trouble focusing while studying. What can I do?",
-    response: "Focus usually breaks down for a reason, so it helps to start by finding yours. A few things that reliably work:\n\n1. Shrink the task. \"Study biology\" is vague; \"read pages 40–46 and note three terms\" is doable. Small targets lower the resistance to starting.\n2. Time-box it. Work in 25-minute blocks with short breaks. The clock, not your willpower, becomes the thing in charge.\n3. Remove the obvious leak. Your phone in another room beats your phone face-down on the desk.\n4. Match energy to task. Do the hard reading when you're freshest; save review for low-energy slots.\n\nIf focus still collapses, look at sleep and whether the material itself is unclear — confusion often feels exactly like distraction."
+    text: "Tell me what is a Large Language Model",
+    response: "A large language model (LLM) is a computer program that has learned to read and write by studying an enormous amount of text — books, articles, conversations, code, and more. You can think of it as an extremely well-read autocomplete: given some words, it has learned, from all that reading, what words tend to come next.\n\nIt doesn't understand language the way people do, and it has no real memories or beliefs. What it has is a very refined sense of pattern — which words, phrases, and ideas typically go together, based on everything it saw during training. That's why it can hold a conversation, answer questions, summarize a document, or write a poem: it's recognizing the shape of language and continuing it in a way that fits.\n\nTraining happens once, in advance: the model is shown text over and over and slowly adjusts itself so its guesses about \"what comes next\" get better. After training, when you actually chat with it, it isn't learning anymore — it's reusing everything it absorbed to generate a reply, one small piece of text at a time, each piece chosen based on everything written so far, including your message.\n\nThat's also why it can sometimes be wrong: it isn't checking facts against the world, it's producing what's statistically plausible given its training. Usually plausible and true line up, but not always — so it can sound confident while still being mistaken.\n\nA bit of the math behind it, for anyone curious: text is split into small chunks called tokens (roughly words or word-pieces). At each step, the model turns the tokens seen so far, x₁, x₂, …, xₜ, into a probability for every possible next token w:\n\nP(next = w | x₁, …, xₜ) = softmax(f(x₁, …, xₜ))_w\n\nHere f is the model's internal calculation — billions of additions and multiplications using tuned numbers called parameters — and softmax simply converts those raw scores into probabilities that add up to 1. The model then samples (or picks the top-scoring) next token, appends it to the text, and repeats. A model's size is usually reported as its parameter count, ranging from a few million to hundreds of billions — roughly what people mean when they call a model \"small\" or \"large.\""
   },
 
   // ---- Step 1: demographics (includes AI familiarity/expertise for RQ6) ----
@@ -155,11 +155,5 @@ window.EXPERIMENT_CONFIG = {
       "There was little or no real delay",
       "Not sure"
     ] },
-  ],
-
-  // ---- Final block ----
-  finalBlock: [
-    { type: "radio", name: "noticed_anything", label: "Did anything about the interaction seem unusual or make you suspect how the study was set up?", options: ["No","Yes"] },
-    { type: "textarea", name: "feedback", label: "If yes, or if you have any other comments, tell us here (optional).", placeholder: "Optional" },
   ],
 };
