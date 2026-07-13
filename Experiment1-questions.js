@@ -1,0 +1,165 @@
+/* ================================================================
+   EXPERIMENT 1 — "Does a Wait Mean the Same Thing for Every Model?"
+   Implements the project brief exactly.
+
+   DESIGN: 2 (label: small / large) × 3 (wait: instant / 9s silent /
+   9s animated), FULLY BETWEEN-SUBJECTS. Each participant is assigned
+   to ONE of the six cells and sees ONE interaction. The response
+   text is IDENTICAL in every cell (the frozen string in `prompt`).
+   Only the disclosed label and the wait differ.
+
+   THE SIX CELLS are generated automatically as  labels × waits.
+   Their ids (used for ?cell= forcing and in the CSV) are:
+     small__instant   small__silent   small__animated
+     large__instant   large__silent   large__animated
+
+   ┌─────────────── ANALYSIS RULES (write these down BEFORE data) ──┐
+   │ • RQ3 / H4 (the label × wait interaction) is the main result.  │
+   │ • TEST H2 FIRST: compare instant vs 9s-silent (the cue-free    │
+   │   replication of Tan et al.). If H2 holds, test H4 as planned. │
+   │   If H2 fails, report the replication as a finding and treat   │
+   │   H4 as exploratory.                                           │
+   │ • H3 (labor illusion) = 9s-silent vs 9s-animated, duration     │
+   │   held constant at 9s — the animation is the only difference.  │
+   │ • Suggested model: 2×3 ANOVA (label × wait) on each outcome,   │
+   │   with the two planned contrasts above.                        │
+   └───────────────────────────────────────────────────────────────┘
+
+   FIELD DESCRIPTOR SHAPES (demographics / measures / finalBlock):
+     { type:'section',  label }                         // subheading only
+     { type:'text',     name, label, placeholder?, required? }
+     { type:'number',   name, label, placeholder?, min?, max?, step?, required? }
+     { type:'select',   name, label, options:[...], required? }
+     { type:'radio',    name, label, options:[...], required? }
+     { type:'likert',   name, label, lo, hi, required? }   // 1..7
+     { type:'textarea', name, label, placeholder?, required? } // optional by default
+   `required` defaults to true for everything except textarea/section.
+   ================================================================ */
+window.EXPERIMENT_CONFIG = {
+
+  meta: {
+    id: "experiment1",
+    title: "Does a Wait Mean the Same Thing for Every Model?",
+    welcomeTitle: "How do people judge AI responses?",
+    description: "You'll send one message to an AI assistant, read its reply, and rate it. There are no right or wrong answers — we're interested in your honest impressions.",
+  },
+
+  // ---- Cross-participant cell balancing (no server, so this is an approximation) ----
+  // This tool is static HTML with no shared backend, so there's no real counter
+  // across participants' browsers. Instead, assignment is a deterministic function
+  // of wall-clock time: time is split into `windowMs`-long slots, and each slot maps
+  // to one of the six cells via a shuffled, evenly-covering order that repeats every
+  // 6 slots (a fresh shuffle each cycle). Every visitor's browser computes the same
+  // slot -> cell from Date.now() alone, so participants arriving in different windows
+  // land on different cells, approximating round-robin over time.
+  // Tune `windowMs` to roughly your expected time between participants (a bit
+  // shorter than the typical gap, so two people rarely share a window). If several
+  // people can click the link at the exact same moment (e.g. a mass email blast),
+  // hand out the six `?cell=...` links manually instead for exact balance.
+  balancing: {
+    mode: "time_balanced", // "time_balanced" (default) or "random" (old pure-random behavior)
+    windowMs: 3 * 60 * 1000, // 3 minutes; shrink/grow to match your expected recruitment pace
+    epochMs: 0, // optional phase offset; leave at 0 unless you want to shift the rotation
+  },
+
+  // ---- Where results are submitted ----
+  // There's no backend, so results are POSTed straight to a Google Apps Script
+  // Web App tied to a Google Sheet in your Drive -- one row appended per
+  // participant, no participant sign-in needed. See apps-script/Code.gs and the
+  // README for the one-time setup (create Sheet -> Extensions > Apps Script ->
+  // paste Code.gs -> Deploy as Web App -> paste the /exec URL below).
+  submission: {
+    webAppUrl: "https://script.google.com/macros/s/AKfycbxfGhlNFix5aMeH122PkSn9YsdH2Qxj_149QCpHzgpj21RUGgyYKPsY1P87XDYvuWQQ/exec", // e.g. "https://script.google.com/macros/s/AKfycb.../exec"
+  },
+
+  // ---- Between-subjects factor 1: the disclosed model label ----
+  // chatName / chatSub are what the participant actually sees in the chat header.
+  labels: {
+    small: {
+      id: "small",
+      chatName: "NanoChat 1B",
+      chatSub: "compact model · ~1B parameters · runs on a phone",
+      // Shown on the instructions screen to reinforce the manipulation.
+      // Keep it factual product-copy, not an advertising slogan.
+      description: "It's a lightweight, compact model — small enough to run locally on a phone or laptop, with modest computing resources behind it."
+    },
+    large: {
+      id: "large",
+      chatName: "TitanChat 400B",
+      chatSub: "frontier model · ~400B parameters · datacenter-scale",
+      description: "It's one of the largest, most capable models available — a frontier system with enormous, datacenter-scale computing resources behind it."
+    },
+  },
+
+  // ---- Between-subjects factor 2: the wait ----
+  // style: 'instant'  -> plain dots, ~sub-second (NOT literally zero; see brief)
+  //        'silent'   -> plain dots held for the full duration (cue-free wait)
+  //        'animated' -> the fancy "thinking" animation for the full duration
+  waits: {
+    instant:  { id: "instant",  durationMs: 800  },  // ~0.8s; brief says 0.5–1s, never true zero
+    silent:   { id: "silent",   durationMs: 9000, style: "silent"   },
+    animated: { id: "animated", durationMs: 9000, style: "animated" },
+  },
+  // (engine reads `style`; instant has no style key -> treated as plain dots)
+
+  // ---- The single frozen stimulus, shown IDENTICALLY in all six cells ----
+  // Replace `response` with the real pre-generated answer you want to test.
+  // Keep it plausible for BOTH a small and a large model, since the same
+  // text appears under both labels.
+  prompt: {
+    text: "I have trouble focusing while studying. What can I do?",
+    response: "Focus usually breaks down for a reason, so it helps to start by finding yours. A few things that reliably work:\n\n1. Shrink the task. \"Study biology\" is vague; \"read pages 40–46 and note three terms\" is doable. Small targets lower the resistance to starting.\n2. Time-box it. Work in 25-minute blocks with short breaks. The clock, not your willpower, becomes the thing in charge.\n3. Remove the obvious leak. Your phone in another room beats your phone face-down on the desk.\n4. Match energy to task. Do the hard reading when you're freshest; save review for low-energy slots.\n\nIf focus still collapses, look at sleep and whether the material itself is unclear — confusion often feels exactly like distraction."
+  },
+
+  // ---- Step 1: demographics (includes AI familiarity/expertise for RQ6) ----
+  demographics: [
+    { type: "number", name: "age", label: "Age", placeholder: "e.g. 27", min: 16, max: 99 },
+    { type: "select", name: "gender", label: "Gender", options: ["Woman","Man","Non-binary","Prefer to self-describe","Prefer not to say"] },
+    { type: "select", name: "education", label: "Highest level of education", options: ["High school","Some college","Bachelor's","Master's","Doctorate","Other"] },
+    { type: "select", name: "llm_use", label: "How often do you use AI chat assistants (ChatGPT, Claude, Gemini…)?", options: ["Never","Tried once or twice","Monthly","Weekly","Daily"] },
+    { type: "likert", name: "ai_familiar", label: "How familiar are you with how AI language models work?", lo: "Not at all", hi: "Extremely" },
+    { type: "likert", name: "ai_expert", label: "How would you rate your technical expertise with AI tools?", lo: "Novice", hi: "Expert" },
+    { type: "text", name: "native_lang", label: "Native language", placeholder: "e.g. English", required: false },
+  ],
+
+  // ---- Step 3: the measure battery (maps 1:1 to §4 of the brief) ----
+  measures: [
+    { type: "section", label: "Overall quality" },   // RQ1–RQ3 main outcome
+    { type: "likert", name: "quality_overall",  label: "Overall, this was a high-quality response.",           lo: "Strongly disagree", hi: "Strongly agree" },
+    { type: "likert", name: "quality_thorough", label: "The response was complete and thorough.",              lo: "Strongly disagree", hi: "Strongly agree" },
+    { type: "likert", name: "quality_useful",   label: "The response was useful to me.",                       lo: "Strongly disagree", hi: "Strongly agree" },
+
+    { type: "section", label: "Reliance" },          // RQ1–RQ3 main outcome
+    { type: "likert", name: "reliance_act",   label: "I would act on the advice in this response.",            lo: "Strongly disagree", hi: "Strongly agree" },
+    { type: "likert", name: "reliance_verify",label: "I would double-check this response before relying on it.",lo: "Strongly disagree", hi: "Strongly agree" },
+
+    { type: "section", label: "Trust & impressions" }, // RQ4
+    { type: "likert", name: "trust",        label: "I trust the information in this response.",                lo: "Strongly disagree", hi: "Strongly agree" },
+    { type: "likert", name: "effort",       label: "It felt like the system worked hard on this response.",    lo: "Strongly disagree", hi: "Strongly agree" },
+    { type: "likert", name: "intelligence", label: "The system seemed intelligent and capable.",               lo: "Strongly disagree", hi: "Strongly agree" },
+    { type: "likert", name: "willing_wait", label: "I would be willing to wait for a response like this again.",lo: "Strongly disagree", hi: "Strongly agree" },
+
+    { type: "section", label: "Reciprocity" },       // explains RQ2–RQ3 (Buell & Norton)
+    { type: "likert", name: "recip_forme",  label: "The system put in effort on my behalf.",                   lo: "Strongly disagree", hi: "Strongly agree" },
+    { type: "likert", name: "recip_owe",    label: "Because of the effort it made, I'd feel inclined to give this system the benefit of the doubt.", lo: "Strongly disagree", hi: "Strongly agree" },
+
+    { type: "section", label: "The wait" },          // RQ5
+    { type: "number", name: "est_wait_s", label: "Roughly how many seconds did you wait for the response to appear?", placeholder: "your best guess", min: 0, max: 120, step: 0.5 },
+
+    { type: "section", label: "A couple more" },     // manipulation checks
+    { type: "likert", name: "mc_computation", label: "How much computation / processing do you think the system did to produce this response?", lo: "Very little", hi: "A great deal" },
+    { type: "radio",  name: "mc_delay_cause", label: "What do you think best explains how long the response took?", options: [
+      "The system was deliberating / thinking hard",
+      "The system was struggling / straining",
+      "Network or connection speed",
+      "There was little or no real delay",
+      "Not sure"
+    ] },
+  ],
+
+  // ---- Final block ----
+  finalBlock: [
+    { type: "radio", name: "noticed_anything", label: "Did anything about the interaction seem unusual or make you suspect how the study was set up?", options: ["No","Yes"] },
+    { type: "textarea", name: "feedback", label: "If yes, or if you have any other comments, tell us here (optional).", placeholder: "Optional" },
+  ],
+};
