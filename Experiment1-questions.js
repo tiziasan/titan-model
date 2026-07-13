@@ -41,7 +41,7 @@ window.EXPERIMENT_CONFIG = {
     id: "experiment1",
     title: "Does a Wait Mean the Same Thing for Every Model?",
     welcomeTitle: "How do people judge AI responses?",
-    description: "You'll send one message to an AI assistant, read its reply, and rate it. There are no right or wrong answers — we're interested in your honest impressions.",
+    description: "You'll send one message to an AI assistant, read its reply, and rate it. There are no right or wrong answers, we're interested in your honest impressions.",
   },
 
   // ---- Cross-participant cell balancing (no server, so this is an approximation) ----
@@ -81,13 +81,13 @@ window.EXPERIMENT_CONFIG = {
       chatSub: "compact model · ~1B parameters · runs on a phone",
       // Shown on the instructions screen to reinforce the manipulation.
       // Keep it factual product-copy, not an advertising slogan.
-      description: "It's a lightweight, compact model — small enough to run locally on a phone or laptop, with modest computing resources behind it."
+      description: "It's a lightweight, compact model, small enough to run locally on a phone or laptop, with modest computing resources behind it."
     },
     large: {
       id: "large",
-      chatName: "TitanChat 400B",
-      chatSub: "frontier model · ~400B parameters · datacenter-scale",
-      description: "It's one of the largest, most capable models available — a frontier system with enormous, datacenter-scale computing resources behind it."
+      chatName: "TitanChat 800B",
+      chatSub: "frontier model · ~800B parameters · datacenter-scale",
+      description: "It's one of the largest, most capable models available, a frontier system with enormous, datacenter-scale computing resources behind it."
     },
   },
 

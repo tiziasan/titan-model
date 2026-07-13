@@ -338,7 +338,7 @@ function screenWelcome(){
       <ul class="muted" style="line-height:1.9;padding-left:18px;margin:0 0 22px">
         <li>Your responses are anonymous and used only for research.</li>
         <li>The whole thing takes about 4–6 minutes.</li>
-        <li>Please don't refresh the page — your progress isn't saved between sessions.</li>
+        <li>Please don't refresh the page, your progress isn't saved between sessions.</li>
       </ul>
       <div class="actions"><button class="btn" id="go">Begin</button></div>
     </div>
@@ -387,7 +387,7 @@ function screenInstructions(){
         </div>
         ${label.description?`<p class="modelcard-desc">${esc(label.description)}</p>`:''}
       </div>
-      <p class="muted">Just go with your gut — your first impression is what we're after.</p>
+      <p class="muted">Just go with your gut, your first impression is what we're after.</p>
       <div class="actions"><button class="btn" id="start">Start</button></div>
     </div>`;
   document.getElementById('start').onclick = screenChat;
@@ -540,12 +540,12 @@ function screenDone(){
     <div class="card center">
       <div class="success-tick" id="tick">…</div>
       <h2 id="title">Submitting your response…</h2>
-      <p class="lede" id="lede">One moment — sending your data.</p>
+      <p class="lede" id="lede">One moment, sending your data.</p>
       <p class="muted">Participant ID: <code>${state.pid}</code> · cell: <span class="cellbadge">${esc(state.assignment.cellId)}</span></p>
     </div>`;
   submitResult().then(ok=>{
     document.getElementById('tick').textContent = ok ? '✓' : '!';
-    document.getElementById('title').textContent = ok ? "Thank you — you're all done" : 'Submission problem';
+    document.getElementById('title').textContent = ok ? "Thank you, you're all done" : 'Submission problem';
     document.getElementById('lede').textContent = ok
       ? 'Your response has been recorded. You can close this tab.'
       : "We couldn't reach the results server (are you offline?). Please tell the researcher your participant ID above so your response isn't lost.";
