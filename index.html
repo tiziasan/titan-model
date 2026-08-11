@@ -339,7 +339,7 @@ function screenWelcome(){
       </ul>
       <div class="actions"><button class="btn" id="go">Begin</button></div>
     </div>
-    <p class="muted center">Participant ID: <code>${state.pid}</code> · cell: <span class="cellbadge">${esc(state.assignment.cellId)}</span></p>`;
+    <p class="muted center">Participant ID: <code>${state.pid}</code></p>`;
   document.getElementById('go').onclick = screenDemographics;
 }
 
@@ -535,7 +535,7 @@ function screenDone(){
       <div class="success-tick" id="tick">…</div>
       <h2 id="title">Submitting your response…</h2>
       <p class="lede" id="lede">One moment, sending your data.</p>
-      <p class="muted">Participant ID: <code>${state.pid}</code> · cell: <span class="cellbadge">${esc(state.assignment.cellId)}</span></p>
+      <p class="muted">Participant ID: <code>${state.pid}</code></p>
     </div>`;
   submitResult().then(ok=>{
     document.getElementById('tick').textContent = ok ? '✓' : '!';
