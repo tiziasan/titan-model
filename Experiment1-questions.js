@@ -40,7 +40,7 @@ window.EXPERIMENT_CONFIG = {
   meta: {
     id: "experiment1",
     title: "Does a Wait Mean the Same Thing for Every Model?",
-    welcomeTitle: "How do people judge AI responses?",
+    welcomeTitle: "Rate our model behaviour",
     description: "You'll send one message to an AI assistant, read its reply, and rate it. There are no right or wrong answers, we're interested in your honest impressions.",
   },
 
@@ -85,9 +85,9 @@ window.EXPERIMENT_CONFIG = {
     },
     large: {
       id: "large",
-      chatName: "TitanChat 800B",
-      chatSub: "frontier model · ~800B parameters · datacenter-scale",
-      description: "It's one of the largest, most capable models available, a frontier system with enormous, datacenter-scale computing resources behind it."
+      chatName: "TitanChat 200B",
+      chatSub: "frontier model · ~200B parameters · datacenter-scale",
+      description: "It's one of the most capable models available, datacenter-scale computing resources behind it."
     },
   },
 
