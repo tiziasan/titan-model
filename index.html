@@ -179,7 +179,7 @@ const progbar = document.getElementById('progbar');
 const steplabel = document.getElementById('steplabel');
 const brandEl = document.getElementById('brand');
 
-const STEPS = ['Intro','About you','Instructions','Interaction','Your impressions','Final','Complete'];
+const STEPS = ['Intro','About you','Instructions','Interaction','Your impressions','Complete'];
 const TOTAL_STEPS = STEPS.length;
 function setProgress(i){
   progbar.style.width = Math.round((i/(TOTAL_STEPS-1))*100) + '%';
@@ -484,10 +484,12 @@ function animateFancy(el, totalMs){
   return ()=>{ clearInterval(ph); clearInterval(tk); };
 }
 
-/* ---------- SURVEY (measures + manipulation checks) ---------- */
+/* ---------- SURVEY (measures + manipulation checks + wrap-up) ---------- */
 function screenSurvey(){
   setProgress(4);
-  const fields = EXP.measures || [];
+  const measureFields = EXP.measures || [];
+  const finalFields = EXP.finalBlock || [];
+  const fields = [...measureFields, ...finalFields];
   root.innerHTML = `
     <div class="card">
       <p class="eyebrow">Step 3 · Your impressions</p>
@@ -495,41 +497,23 @@ function screenSurvey(){
       <p class="lede">Please answer based on your honest first impression.</p>
       <div id="survey">${fields.map(renderField).join('')}</div>
       <div class="err" id="err"></div>
-      <div class="actions"><button class="btn" id="next">Continue</button></div>
-    </div>`;
-  document.getElementById('next').onclick = ()=>{
-    const data = collectForm('survey');
-    const missing = validate(fields, data);
-    if(missing.length){ document.getElementById('err').textContent='Please answer all required questions before continuing.'; return; }
-    state.measures = data;
-    screenFinal();
-  };
-}
-
-/* ---------- FINAL ---------- */
-function screenFinal(){
-  setProgress(5);
-  const fields = EXP.finalBlock || [];
-  root.innerHTML = `
-    <div class="card">
-      <p class="eyebrow">Almost done</p>
-      <h2>A few wrap-up questions</h2>
-      <div id="final">${fields.map(renderField).join('')}</div>
-      <div class="err" id="err"></div>
       <div class="actions"><button class="btn" id="done">Submit &amp; finish</button></div>
     </div>`;
   document.getElementById('done').onclick = ()=>{
-    const data = collectForm('final');
+    const data = collectForm('survey');
     const missing = validate(fields, data);
-    if(missing.length){ document.getElementById('err').textContent='Please answer the required questions before submitting.'; return; }
-    state.final = data;
+    if(missing.length){ document.getElementById('err').textContent='Please answer all required questions before submitting.'; return; }
+    const finalKeys = finalFields.filter(f=>f.type!=='section').map(f=>f.name);
+    state.measures = {};
+    state.final = {};
+    Object.keys(data).forEach(k=>{ (finalKeys.includes(k) ? state.final : state.measures)[k] = data[k]; });
     screenDone();
   };
 }
 
 /* ---------- DONE + EXPORT ---------- */
 function screenDone(){
-  setProgress(6);
+  setProgress(5);
   root.innerHTML = `
     <div class="card center">
       <div class="success-tick" id="tick">…</div>
