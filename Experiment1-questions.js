@@ -39,7 +39,7 @@ window.EXPERIMENT_CONFIG = {
 
   meta: {
     id: "experiment1",
-    title: "Does a Wait Mean the Same Thing for Every Model?",
+    title: "Large Language Model Evaluation",
     welcomeTitle: "Rate our model behaviour",
     description: "You'll send one message to an AI assistant, read its reply, and rate it. There are no right or wrong answers, we're interested in your honest impressions.",
   },
@@ -57,7 +57,7 @@ window.EXPERIMENT_CONFIG = {
   // people can click the link at the exact same moment (e.g. a mass email blast),
   // hand out the six `?cell=...` links manually instead for exact balance.
   balancing: {
-    mode: "time_balanced", // "time_balanced" (default) or "random" (old pure-random behavior)
+    mode: "random", // "time_balanced" (default) or "random" (old pure-random behavior)
     windowMs: 3 * 60 * 1000, // 3 minutes; shrink/grow to match your expected recruitment pace
     epochMs: 0, // optional phase offset; leave at 0 unless you want to shift the rotation
   },
