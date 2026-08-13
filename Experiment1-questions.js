@@ -114,7 +114,7 @@ window.EXPERIMENT_CONFIG = {
   // ---- Step 1: demographics (includes AI familiarity/expertise for RQ6) ----
   demographics: [
     { type: "number", name: "age", label: "Age", placeholder: "e.g. 27", min: 16, max: 99 },
-    { type: "select", name: "gender", label: "Gender", options: ["Woman","Man","Non-binary","Prefer to self-describe","Prefer not to say"] },
+    { type: "select", name: "gender", label: "Gender", options: ["Woman","Man","Non-binary","Prefer not to say"] },
     { type: "select", name: "education", label: "Highest level of education", options: ["High school","Some college","Bachelor's","Master's","Doctorate","Other"] },
     { type: "select", name: "llm_use", label: "How often do you use AI chat assistants (ChatGPT, Claude, Gemini…)?", options: ["Never","Tried once or twice","Monthly","Weekly","Daily"] },
     { type: "likert", name: "ai_familiar", label: "How familiar are you with how AI language models work?", lo: "Not at all", hi: "Extremely" },
